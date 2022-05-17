@@ -1,25 +1,33 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class StackSystem : MonoBehaviour
 {
+    #region Serializable Field
     [SerializeField] private CollectablePart collectablePartPrefab;
     [SerializeField] private Transform stackParent;
+    [SerializeField] private TextMeshProUGUI winText;
+    #endregion
 
+    #region Public Field
     [HideInInspector]
     public bool final = false;
 
     public float finalSpeed;
     public ParticleSystem winPartical;
+    #endregion
 
+    #region Private Field
     private float finalOffsetZ = 1.72f;
     private float finalYPos = 0.1f;
     private float partOffset = 0.125f;
     private List<CollectablePart> collectableParts = new List<CollectablePart>();
     private Animator anim;
     private PlayerController playerController;
+    #endregion
 
+    #region Unity
     private void Awake()
     {
         anim = GetComponentInChildren<Animator>();
@@ -29,14 +37,6 @@ public class StackSystem : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Collect();
-        }
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Remove();
-        }
         if (final)
         {
             for (int i = 0; i < collectableParts.Count; i++)
@@ -57,7 +57,6 @@ public class StackSystem : MonoBehaviour
                     x = 0f;
                 }
                 collectablePartTransform.position = new Vector3(x, y, z);
-
             }           
         }
     }
@@ -86,7 +85,9 @@ public class StackSystem : MonoBehaviour
             FinishGame();
         }
     }
+    #endregion
 
+    #region Private Functions
     private void Collect()
     {
         CollectablePart collectablePart = Instantiate(collectablePartPrefab);
@@ -124,10 +125,12 @@ public class StackSystem : MonoBehaviour
 
     private void FinishGame()
     {
+        winText.text = "You collect " + (collectableParts.Count* collectableParts.Count).ToString() + " honeycomb!";
         final = true;
         winPartical.Play();
         anim.SetTrigger("Win");
         playerController.SetGameState(true);
         GameManager.current.SetPanel(false, true, false, false);
     }
+    #endregion
 }

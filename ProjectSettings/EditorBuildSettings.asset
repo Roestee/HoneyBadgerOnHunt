@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/HoneyBadgerOnHunt/Scenes/GameScene.unity
+    path: Assets/HoneyBadgerOnHunt/Scenes/Level 1.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/HoneyBadgerOnHunt/Scenes/Level 2.unity
+    guid: 97ffbe1df8e5b084a88894755d8dd222
+  - enabled: 1
+    path: Assets/HoneyBadgerOnHunt/Scenes/Level 3.unity
+    guid: 73c129b97127d3040a07d6e3ff4cd88b
   m_configObjects: {}
