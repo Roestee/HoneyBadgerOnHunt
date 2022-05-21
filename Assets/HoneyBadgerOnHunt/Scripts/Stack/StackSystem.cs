@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class StackSystem : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class StackSystem : MonoBehaviour
     [SerializeField] private CollectablePart collectablePartPrefab;
     [SerializeField] private Transform stackParent;
     [SerializeField] private TextMeshProUGUI winText;
+    [SerializeField] private TextMeshProUGUI levelText;
     #endregion
 
     #region Public Field
@@ -33,6 +35,7 @@ public class StackSystem : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
         playerController = GetComponent<PlayerController>();
         final = false;
+        levelText.text = SceneManager.GetActiveScene().name;
     }
 
     private void Update()
