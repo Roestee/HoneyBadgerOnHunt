@@ -6,18 +6,31 @@ using UnityEngine.SceneManagement;
 public class StackSystem : MonoBehaviour
 {
     #region Serializable Field
+    [Header("Stack")]
     [SerializeField] private CollectablePart collectablePartPrefab;
     [SerializeField] private Transform stackParent;
+
+    [Header("Text")]
     [SerializeField] private TextMeshProUGUI winText;
     [SerializeField] private TextMeshProUGUI levelText;
+    [SerializeField] private TextMeshProUGUI coinText;
+
+    [Header("Sound")]
+    [SerializeField] private AudioClip coinSound;
+    [SerializeField] private AudioClip failSound;
+    [SerializeField] private AudioClip winSound;
     #endregion
 
     #region Public Field
     [HideInInspector]
     public bool final = false;
 
-    public float finalSpeed;
+    [Header("Partical")]
     public ParticleSystem winPartical;
+
+    [Header("Final")]
+    public float finalSpeed;
+
     #endregion
 
     #region Private Field
@@ -27,6 +40,7 @@ public class StackSystem : MonoBehaviour
     private List<CollectablePart> collectableParts = new List<CollectablePart>();
     private Animator anim;
     private PlayerController playerController;
+    private AudioSource sound;
     #endregion
 
     #region Unity
@@ -34,8 +48,10 @@ public class StackSystem : MonoBehaviour
     {
         anim = GetComponentInChildren<Animator>();
         playerController = GetComponent<PlayerController>();
+        sound = GetComponent<AudioSource>();
         final = false;
         levelText.text = SceneManager.GetActiveScene().name;
+        coinText.text = PlayerPrefs.GetInt("Coin", 0).ToString() + " Honeycomb";
     }
 
     private void Update()
@@ -97,20 +113,8 @@ public class StackSystem : MonoBehaviour
         collectablePart.transform.parent = stackParent;
         collectablePart.transform.localPosition = new Vector3(0, collectableParts.Count * partOffset, 0);
         collectableParts.Add(collectablePart);
+        sound.PlayOneShot(coinSound);
         collectablePart.GetComponent<BoxCollider>().enabled = false;
-    }
-
-    private void Remove()
-    {
-        int index = collectableParts.Count - 1;
-
-        if (index < 0)
-        {
-            return;
-        }
-
-        Destroy(collectableParts[index].gameObject);
-        collectableParts.RemoveAt(index);
     }
 
     private void FailGame()
@@ -120,6 +124,7 @@ public class StackSystem : MonoBehaviour
             Destroy(collectableParts[i].gameObject);
         }
 
+        sound.PlayOneShot(failSound);
         collectableParts.Clear();
         anim.SetTrigger("FallBack");
         playerController.SetGameState(true);
@@ -128,7 +133,11 @@ public class StackSystem : MonoBehaviour
 
     private void FinishGame()
     {
-        winText.text = "You collect " + (collectableParts.Count* collectableParts.Count).ToString() + " honeycomb!";
+        sound.PlayOneShot(winSound, 4f);
+        int finalCoin = collectableParts.Count * collectableParts.Count;
+        PlayerPrefs.SetInt("Coin", finalCoin + PlayerPrefs.GetInt("Coin"));
+        winText.text = "You collect " + finalCoin.ToString() + " honeycomb!";
+        coinText.text = finalCoin.ToString() + "Honeycomb";
         final = true;
         winPartical.Play();
         anim.SetTrigger("Win");
